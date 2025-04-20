@@ -17,6 +17,8 @@ Data hails from [Luke Barousse's SQL course](https://lukebarousse.com/sql). It's
 3. what skills are most in-demand for data analyst?
 4. Which skills are associated with higher salaries?
 5. What are the most optimal skills to learn?
+6. What is the salary trend by location?
+7. Education requirement analysis.
 
 # Tools I Used
 To explore the data analyst job market, I utilized a range of powerful tools:
@@ -233,6 +235,74 @@ Best of Both Worlds:
 | 233           | jira           | 20           | 104,918            |
 
 *Table of the most optimal skills for data analysts sorted by salary*
+
+### 6. What are the salary trends by location
+Analyzed how salaries for data analyst roles vary across different regions or cities.
+
+```sql
+SELECT 
+    job_location,
+    ROUND(AVG(salary_year_avg), 0) AS avg_salary,
+    COUNT(*) AS job_count
+FROM 
+    job_postings_fact
+WHERE
+    job_title_short = 'Data Analyst' AND
+    salary_year_avg IS NOT NULL AND
+    job_location IS NOT NULL
+GROUP BY 
+    job_location
+ORDER BY 
+    avg_salary DESC
+LIMIT 25;
+```
+| Rank | Job Location                     | Average Salary ($) | Job Count |
+|------|----------------------------------|---------------------|-----------|
+| 1    | Belarus                          | 400,000             | 1         |
+| 2    | Hildesheim, Germany              | 200,000             | 1         |
+| 3    | Nea Smyrni, Greece               | 200,000             | 1         |
+| 4    | Berkeley Heights, NJ             | 200,000             | 1         |
+| 5    | Merced, CA                       | 200,000             | 1         |
+| 6    | Renningen, Germany               | 199,838             | 2         |
+| 7    | South San Francisco, CA          | 182,771             | 7         |
+| 8    | Taipei, Taiwan                   | 180,000             | 1         |
+| 9    | Valparaiso, IN                   | 173,500             | 1         |
+| 10   | Saratoga, CA                     | 170,000             | 1         |
+
+*Table of the top 10 locations with the highest salary trend*
+
+### 7. Education requirement analysis
+I investigated the correlation between educational qualifications and salary levels.
+
+```sql
+SELECT 
+    'Degree Mentioned' AS degree_status,
+    ROUND(AVG(salary_year_avg), 0) AS avg_salary
+FROM 
+    job_postings_fact
+WHERE 
+    job_no_degree_mention = FALSE
+
+UNION ALL
+
+SELECT 
+    'No Degree Mentioned' AS degree_status,
+    ROUND(AVG(salary_year_avg), 0) AS avg_salary
+FROM 
+    job_postings_fact
+WHERE 
+    job_no_degree_mention = TRUE;
+```
+
+- The above query shows listings that mention degrees offer ~10% higher salaries on average.
+
+| **Degree Status**       | **Average Salary** |
+|-------------------------|--------------------|
+| No Degree Mentioned      | 113,645            |
+| Degree Mentioned         | 125,026            |
+
+*Table of education requirement analysis*
+
 
 # What I Learned
 
